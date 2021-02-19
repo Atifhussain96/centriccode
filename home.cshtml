@@ -1,0 +1,584 @@
+﻿@using ContentModels = Umbraco.Web.PublishedModels;
+@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Home>
+@using ClientDependency.Core.Mvc
+@{
+    Layout = "master.cshtml";
+    //var backgroundImage = Model.HeroBackgroundImage != null ? Model.HeroBackgroundImage.Url : String.Empty;
+
+    Html.RequiresCss("~/css/modal.css");
+    Html.RequiresCss("~/css/reopstyle.css");
+    //var homepage = Model.AncestorOrSelf<Home>();
+    var lang = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    var upcomingEvent = Model.AncestorOrSelf(1).DescendantsOfType("eventDetails").OrderByDescending(x => x.Value<DateTime?>("eventEndDate"))
+        .FirstOrDefault(x => x.IsVisible() && (x.Value<DateTime?>("eventEndDate") >= DateTime.Now.Date));
+}
+
+<link rel="stylesheet" href="/css/style.css" />
+<style type="text/css">
+    #surveyModal .modal-dialog .survey-wrap {
+        background-color: #FACDC8 !important;
+    }
+</style>
+@*<div id="hero-video-popup">
+        <div class="hero-video-content">
+            <i class="fal fa-times"></i>
+            <div class="video-wrapper">
+                <video src=""></video>
+            </div>
+        </div>
+    </div>*@
+<!--Start Main Banner-->
+<section class="main-banner">
+    <div class="container-fluid custom-container-fluid">
+        <div class="main-slide">
+            @foreach (ContentModels.HomeSlider hSlide in Model.AncestorOrSelf(1).DescendantsOfType("homeSlider"))
+            {
+                if (hSlide.SliderVideo != null && !string.IsNullOrEmpty(hSlide.SliderVideo.Url))
+                {
+                    <div class="slide video-slide">
+                        <div class="clearfix sliderVideo-holder">
+                            <video id="slider_video" class="tv_video hide-for-small-only"
+                                   poster="@hSlide.SliderImage.Url" controls="controls" autoplay muted>
+                                <source src="@hSlide.SliderVideo.Url" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        @if (!hSlide.ShowLinkText)
+                        {
+                            <div class="caption">
+                                <h3>@hSlide.SliderHeading</h3>
+                                <a href="@hSlide.ButtonLink" class="btn btn-primary">@hSlide.ButtonText</a>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (hSlide.SliderImage != null && !string.IsNullOrEmpty(hSlide.SliderImage.Url))
+                {
+                    <div class="slide">
+                        <a href="@hSlide.ButtonLink">
+                            <img src="@hSlide.SliderImage.Url" class="img-fluid" alt="@hSlide.SliderHeading" />
+                        </a>
+                        <div class="caption" style="display: none">
+                            <h3>@hSlide.SliderHeading</h3>
+                            @if (!hSlide.ShowLinkText)
+                            {
+                                <a href="@hSlide.ButtonLink" class="btn btn-primary">@hSlide.ButtonText</a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+<!--End Main Banner-->
+<!--Start Ultimate Experince-->
+<section class="box-holder">
+    <!--Start Heading-->
+    <div class="heading-holder">
+        <h3 class="heading-border">@Umbraco.GetDictionaryValue("UltimateExperienceHeading")</h3>
+    </div>
+    <!--End Heading-->
+    <div class="container-fluid custom-container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ultimate-listing gtm-mainsec" data-section="ultimate-listing">
+                    @{
+                        var shopEE = Model.AncestorOrSelf(1).DescendantsOfType("shopsLandingDocType").FirstOrDefault();//Model.Content.Site().FirstChild("shop"); //ShopLanding
+                        var shopEEImg = shopEE.Value<IPublishedContent>("UEImage");
+                        var shopEEImgURL = shopEEImg == null ? "" : shopEEImg.Url();
+
+                        var shopEETitle = shopEE.Value("UETitle");
+
+                        var shopEELink = Umbraco.Content(shopEE.Value("UELink").ToString());
+                        var shopEELinkURL = shopEELink == null ? "" : shopEELink.Url();
+
+                        var shopEEBtnText = shopEE.Value("UELinkText");
+
+
+                        <div class="ultimate-holder" data-aos="fade-up">
+                            <figure>
+                                <img src="@shopEEImgURL" class="img-fluid" alt="@shopEETitle" />
+                                <div class="clearfix info-holder">
+                                    <div class="title">@shopEETitle</div>
+                                    <a href="@shopEELinkURL" class="link gtm-track-tile-event" name="@shopEEBtnText-tile"><span>@shopEEBtnText</span></a>
+                                </div>
+                            </figure>
+                        </div>
+
+
+                        var dineEE = Model.AncestorOrSelf(1).DescendantsOfType("dineLandingDocType").FirstOrDefault();//Model.Content.Site().FirstChild("dineLandingDocType"); //DineLanding
+                        var dineEEImg = dineEE.Value<IPublishedContent>("UEImage");
+                        var dineEEImgURL = dineEEImg == null ? "" : dineEEImg.Url();
+
+                        var dineEETitle = dineEE.Value("UETitle");
+
+                        var dineEELink = Umbraco.Content(dineEE.Value("UELink").ToString());
+                        var dineEELinkURL = dineEELink == null ? "" : dineEELink.Url();
+
+                        var dineEEBtnText = dineEE.Value("UELinkText");
+
+                        <div class="ultimate-holder" data-aos="fade-down">
+                            <figure>
+                                <img src="@dineEEImgURL" class="img-fluid" alt="@dineEETitle" />
+                                <div class="clearfix info-holder">
+                                    <div class="title">@dineEETitle</div>
+                                    <a href="@dineEELinkURL" class="link gtm-track-tile-event" name="@dineEEBtnText-tile"><span>@dineEEBtnText</span></a>
+                                </div>
+                            </figure>
+                        </div>
+
+
+                        var entEE = Model.AncestorOrSelf(1).DescendantsOfType("entertainLandingDocType").FirstOrDefault();//Model.Content.Site().FirstChild("entertainLandingDocType"); //EntertainmentLanding
+                        var entEEImg = entEE.Value<IPublishedContent>("UEImage");
+                        var entEEImgURL = entEEImg == null ? "" : entEEImg.Url();
+
+                        var entEETitle = entEE.Value("UETitle");
+
+                        var entEELink = Umbraco.Content(entEE.Value("UELink").ToString());
+                        var entEELinkURL = entEELink == null ? "" : entEELink.Url();
+
+                        var entEEBtnText = entEE.Value("UELinkText");
+
+                        <div class="ultimate-holder" data-aos="fade-up">
+                            <figure>
+                                <img src="@entEEImgURL" class="img-fluid" alt="@entEETitle" />
+                                <div class="clearfix info-holder">
+                                    <div class="title">@entEETitle</div>
+                                    <a href="@entEELinkURL" class="link gtm-track-tile-event" name="@entEEBtnText-tile"><span>@entEEBtnText</span></a>
+                                </div>
+                            </figure>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--End Ultimate Experince-->
+<!--Start Info Strips-->
+@{
+    var contactUsDocType = Model.AncestorOrSelf(1).DescendantsOfType("contactUs").FirstOrDefault();
+    string mallWeekDayTime = "";
+    if (contactUsDocType != null)
+    {
+        mallWeekDayTime = contactUsDocType.GetProperty("generalHoursLine1Hours").GetValue().ToString();
+    }
+}
+<section class="box-holder infostrips-holder">
+    <div class="container-fluid custom-container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-12 pR-1">
+                <div class="is-item hours" data-aos="fade-right" data-aos-offset="100">
+                    <a href="@Umbraco.GetDictionaryValue("ContactUsHref")" class="link"></a>
+                    <div class="is-content">
+                        <div class="is-title">@Umbraco.GetDictionaryValue("OpeningHours")</div>
+                        <div class="is-info" id="openHours">@mallWeekDayTime</div>
+                        <div class="is-cta">@Umbraco.GetDictionaryValue("ViewAllHours")</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 pR-0 pL-0">
+                <div class="is-item location" data-aos="fade-right" data-aos-offset="200">
+                    <a href="@Umbraco.GetDictionaryValue("ContactUsHref")#map-location" class="link"></a>
+                    <div class="is-content">
+                        <div class="is-title">@Umbraco.GetDictionaryValue("GettingHere")</div>
+                        <div class="is-info">@Umbraco.GetDictionaryValue("YasIslandAbuDhabiUAE")</div>
+                        <div class="is-cta">@Umbraco.GetDictionaryValue("ViewOurLocation")</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 pL-1" data-aos="fade-right" data-aos-offset="200">
+                <div class="is-item campaign">
+                    <a href="@(upcomingEvent != null ? upcomingEvent.Url : "/en/events?t=past")" class="link"></a>
+                    <div class="is-content">
+                        <div class="is-title">@Umbraco.GetDictionaryValue("WhatsOn")</div>
+                        <div class="is-info">@(upcomingEvent != null ? upcomingEvent.Value("eventMainTitle") : Umbraco.GetDictionaryValue("NoUpcomingEvents"))</div>
+                        <div class="is-cta">@Umbraco.GetDictionaryValue(upcomingEvent != null ? "FindOutMore" : "ViewPastEvents")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--End Info Strips-->
+<!--Start MyPark Service Box-->
+@{
+    var wsfyList = Model.AncestorOrSelf(1).DescendantsOfType("weShopForYouDoc");
+    //Model.Content.Site().Children.Where(x => x.IsDocumentType("WeShopForYouDoc"));
+    var objMyPark = wsfyList.Where(x => x.Id == 1734).FirstOrDefault(); //Get The MyPark Service Content By Id
+    if (objMyPark != null)
+    {
+        var myparkMainTitle = objMyPark.Value("wsfyTitle");
+        var myparkSmallInfo = objMyPark.Value("wsfySmallInfoHP");
+        var myparkHomePageImg = objMyPark.Value<IPublishedContent>("wsfyHomePageImg");
+        var myparkVideo1 = objMyPark.Value<IPublishedContent>("wsfyVideo1");
+
+        if (myparkHomePageImg != null && myparkVideo1 != null)
+        {
+            <section class="box-holder dp-box akyasi-holder">
+                <!--Start Heading-->
+                <div class="heading-holder">
+                    <h2 class="sub-heading">@myparkMainTitle</h2>
+                </div>
+                <!--End Heading-->
+                <!--Start MyPark Video-->
+                <div class="container-fluid custom-container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="video-holder gtm-mainsec" data-section="mypark-video">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-12 video-holder">
+                                        <div class="video-box" data-aos="fade-in" data-aos-duration="1500">
+                                            <video controls id="mypark_video" class="tv_video hide-for-small-only" name="@objMyPark.Name-VideoPlay" poster="@myparkHomePageImg.Url()">
+                                                <source src="@myparkVideo1.Url()" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                            <div class="play-bt" name="@objMyPark.Name-VideoPlay"></div>
+                                            <div class="pause-bt" style="display:none;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-12 video-content" data-aos="@(lang == "ar" ? "fade-right" : "fade-left")" data-aos-duration="1200" style="display:flex; align-items: center;">
+                                        <span>
+                                            <span style="text-align: justify; font-size: 0.9rem;">@Html.Raw(myparkSmallInfo)</span>
+                                            <a href="@objMyPark.Url()" class="btn btn-primary gtm-track-more-event" name="@objMyPark.Name-KnowMore">@Umbraco.GetDictionaryValue("knowMore")</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End MyPark Video-->
+            </section>
+        }
+    }
+}
+<!--End MyPark Service Box-->
+<!--Start Whats New-->
+@{
+    var etihadGst = Model.AncestorOrSelf(1).DescendantsOfType("etihadGuestDocType").FirstOrDefault();
+    //Model.Content.Site().FirstChild("etihadGuestDocType");
+
+    if (etihadGst != null)
+    {
+        var egVideoPoster = etihadGst.Value<IPublishedContent>("egEtihadVideoPoster");
+        var egRewardVideo = etihadGst.Value<IPublishedContent>("egRewardVideo");
+        <section class="box-holder akyasi-holder">
+            <!--Start Akyasi Slider-->
+            <div class="container-fluid custom-container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="video-holder">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-12 video-holder" data-aos="fade-up" data-aos-duration="1500">
+                                    <div class="video-box">
+                                        @if (egVideoPoster != null && egRewardVideo != null)
+                                        {
+                                            <video controls id="ban_video2" class="tv_video hide-for-small-only"
+                                                   poster="@egVideoPoster.Url()">
+                                                <source src="@egRewardVideo.Url()" type="video/mp4" />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                            <div class="play-bt"></div>
+                                            <div class="pause-bt" style="display:none;"></div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-12 video-content" data-aos="fade-down" data-aos-duration="1500">
+                                    <!--Start Heading-->
+                                    <div class="heading-holder">
+                                        <h2 class="sub-heading">@Umbraco.GetDictionaryValue("Etihad")</h2>
+                                    </div>
+                                    <!--End Heading-->
+                                    @Html.Raw(etihadGst.GetProperty("winningPartnership").GetValue())
+                                    <a href="@Umbraco.GetDictionaryValue("EtihadHref")" class="btn btn-black">@Umbraco.GetDictionaryValue("KnowMore")</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End Akyasi Slider-->
+        </section>
+    }
+
+}
+<!--End Whats New-->
+<!--Start Re-Opening-->
+@if (lang == "ar")
+{
+    @Html.RequiresCss("~/css/reopstyle-ar.css");
+    <section class="re-opening">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ln-title">
+                        <h3 class="section-title">مرحى! الجيمي مول يفتح أبوابه مجدداً.</h3>
+                        <p>
+                            وجهتك المفضلة للتسوق أصبحت جاهزة لاستقبالك.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a href="wearereopening#store">
+                <div class="your-way">
+                    <img src="../assets/images/your-way.jpg" alt="">
+                    <div class="content-wrappers">
+                        <h2>أنت والمول المفضل لديك</h2>
+                        <p>
+                            كزبون مسؤول، نطلب منك اتباع بعض الإرشادات الأساسية للصّحة والسلامة أثناء التسّوق في الجيمي مول.
+                        </p>
+                        <a href="wearereopening#store" class="readmore">@Umbraco.GetDictionaryValue("ReadMore")</a>
+                    </div>
+                </div>
+            </a>
+            <div class="side-imgs">
+                <a href="wearereopening#menu2">
+                    <div class="parking">
+                        <img src="../assets/images/parking.jpg" alt="">
+                        <div class="parking-content">
+                            <h3 class="paking-heading">
+                                ركن السيارات و<br />
+                                غيرها من المعلومات
+                            </h3>
+                            <!-- <p>Check out the available parking lots and<br>
+                            how to park safely.</p> -->
+                            <a href="wearereopening#menu2" class="readmore">@Umbraco.GetDictionaryValue("KnowMore")</a>
+                        </div>
+                    </div>
+                </a>
+                <a href="wearereopening#menu1" class="gtm-track-more-event" name="Safety Measures at YAS Mall-WatchVideos">
+                    <div class="safety-first" data-aos="fade-up" data-aos-duration="1500">
+                        <img src="/assets/images/safety.png" alt="" />
+                        <div class="parking-content">
+                            <h3 class="covid19-heading">إجراءات السلامة في ياس مول</h3>
+                            <p>
+                                سلامتكم هي أولويتنا في ياس مول
+                            </p>
+                            <a href="wearereopening#menu1" class="readmore watchnow-text gtm-track-more-event" name="Safety Measures at YAS Mall-WatchVideos">Watch Videos</a>
+                            <div class="video-icon">
+                                <a href="wearereopening#menu1" class="gtm-track-more-event" name="Safety Measures at YAS Mall-WatchVideos"><img src="/assets/images/video-icon.png" class="img-responsive" alt="" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            <div class="btn-more">
+                <a href="wearereopening#store" class="btn btn-black">@Umbraco.GetDictionaryValue("KnowMore")</a>
+            </div>
+        </div>
+    </section>
+}
+@if (lang == "en")
+{
+    <section class="re-opening">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ln-title">
+                        <h3 class="section-title">Yes! Al Jimi Mall is now open.</h3>
+                        <p>
+                            Your preferred shopping destination is ready to welcome you back.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a href="wearereopening#store">
+                <div class="your-way">
+                    <img src="../assets/images/your-way.jpg" alt="">
+                    <div class="content-wrappers">
+                        <h2>You and your mall</h2>
+                        <p>
+                            As a responsible customer, please follow a
+                            few basic health and safety guidelines while
+                            shopping at Al Jimi Mall.
+                        </p>
+                        <a href="wearereopening#store" class="readmore">@Umbraco.GetDictionaryValue("ReadMore")</a>
+                    </div>
+                </div>
+            </a>
+            <div class="side-imgs">
+                <a href="wearereopening#menu2">
+                    <div class="parking">
+                        <img src="../assets/images/parking.jpg" alt="">
+                        <div class="parking-content">
+                            <h3 class="paking-heading">
+                                Parking and <br />
+                                other information
+                            </h3>
+                            <!-- <p>Check out the available parking lots and<br>
+                            how to park safely.</p> -->
+                            <a href="wearereopening#menu2" class="readmore">@Umbraco.GetDictionaryValue("KnowMore")</a>
+                        </div>
+                    </div>
+                </a>
+                <a href="wearereopening#menu1">
+                    <div class="safety-first">
+                        <img src="../assets/images/safety.jpg" alt="">
+                        <div class="parking-content">
+                            <h3 class="covid19-heading">Safety Is our Priority</h3>
+                            <p>
+                                At Al Jimi Mall your safety is <br />
+                                our priority.
+                            </p>
+                            <a href="wearereopening#menu1" class="readmore watchnow-text">@Umbraco.GetDictionaryValue("KnowMore")</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="btn-more">
+                <a href="wearereopening#store" class="btn btn-black">@Umbraco.GetDictionaryValue("KnowMore")</a>
+            </div>
+        </div>
+    </section>
+}
+<!--End Re-Opening-->
+<!--Start Featured Box-->
+@{
+    var featured = Model.AncestorOrSelf(1).DescendantsOfType("featuredLandingDocType").FirstOrDefault();//Model.Content.Site().FirstChild("featuredLandingDocType");
+    if (featured != null)
+    {
+        <section class="box-holder featured-holder lg-box">
+            <!--Start Heading-->
+            <div class="heading-holder">
+                <h2 class="sub-heading">@featured.Value("featuredMainTitle")</h2>
+            </div>
+            <!--End Heading-->
+            <!--Start Feature Slider-->
+            <div class="container-fluid custom-container-fluid">
+                <div class="row">
+                    <div class="col-md-12" data-aos="fade-up">
+                        <div class="custom-slider feature-slider">
+                            @{
+                                IEnumerable<IPublishedContent> featItems = featured.Children().Where(x => x.IsVisible());
+                                foreach (var fItem in featItems)
+                                {
+                                    IEnumerable<IPublishedContent> shopCats = new List<IPublishedContent>();
+                                    var fShopCats = fItem.Value<IEnumerable<dynamic>>("shop_Category");
+                                    if (fShopCats != null)
+                                    {
+                                        shopCats = Model.AncestorOrSelf(1).DescendantsOfType("shopCategory").FirstOrDefault() /*Model.Content.Site().FirstChild("shopCategory")*/.Children()
+                                            .Where(x => x.IsVisible() && fShopCats.Any(sc => sc.Id == x.Id))
+                                            .OrderBy(x => x.Name);
+                                    }
+                                    IEnumerable<IPublishedContent> dineCats = new List<IPublishedContent>();
+                                    var fDineCats = fItem.Value<IEnumerable<dynamic>>("dine_Category");
+                                    if (fDineCats != null)
+                                    {
+                                        dineCats = Model.AncestorOrSelf(1).DescendantsOfType("dineCategory").FirstOrDefault()/* Model.Content.Site().FirstChild("dineCategory")*/.Children()
+                                            .Where(x => x.IsVisible() && fDineCats.Any(sc => sc.Id == x.Id))
+                                            .OrderBy(x => x.Name);
+                                    }
+
+                                    var thumbImage = fItem.Value<IPublishedContent>("thumbImage");
+                                    if (thumbImage != null)
+                                    {
+                                        var fPageLink = fItem.Value("shopPageLink");
+                                        var fPageLinkURL = fPageLink == null ? fItem.Url() : Umbraco.Content(fPageLink.ToString()).Url();
+                                        <div class="slide">
+                                            <div class="feature-box">
+                                                <a href="@fPageLinkURL">
+                                                    <figure>
+                                                        <img src="@thumbImage.Url()" alt="@fItem.Value("shopTitle")" class="img-fluid" />
+                                                    </figure>
+                                                    <ul class="list-unstyled red-btn">
+                                                        @foreach (var dcItem in dineCats)
+                                                        {
+                                                            <li class="feature-cat">@dcItem.Value("categoryTitle")</li>
+                                                        }
+                                                        @foreach (var scItem in shopCats)
+                                                        {
+                                                            <li class="feature-cat">@scItem.Value("categoryTitle")</li>
+                                                        }
+                                                        <li class="feature-title">@fItem.Value("shopTitle")</li>
+                                                        <li class="feature-location">@fItem.Value("floorName")</li>
+                                                    </ul>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End Feature Slider-->
+        </section>
+    }
+}
+<!--End Featured Box-->
+<!--Start Gift Card-->
+@{
+    var imgGiftCard = Model.GiftcardImage;
+    if (imgGiftCard != null && !string.IsNullOrEmpty(imgGiftCard.Url()))
+    {
+        <section class="box-holder black-box giftcard-holder">
+            <div class="container-fluid custom-container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="giftcard-box">
+                            <div class="row">
+                                <div class="col-md-6 align-center" data-aos="@(lang == "ar" ? "fade-left" : "fade-right")" data-aos-offset="130">
+                                    @{
+                                        <img src="@imgGiftCard.Url()" alt="@Model.GiftcardTitle" class="img-fluid" />
+                                    }
+                                </div>
+                                <div class="col-md-6 align-center" data-aos="fade-up" data-aos-duration="1200">
+                                    <div class="giftcard-content">
+                                        <div class="heading-holder">
+                                            <h2 class="sub-heading">@Model.GiftcardTitle</h2>
+                                        </div>
+                                        <strong>@Model.GiftcardSubHeading</strong>
+                                        @Html.Raw(Model.GiftcardBlurb)
+                                        <a href="@Umbraco.GetDictionaryValue("GiftCardHref")" class="btn btn-primary">@Umbraco.GetDictionaryValue("BuyOnline")</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    }
+}
+<!--End Gift Card-->
+@*<section class="section section--full-height background-image-full overlay overlay--dark section--content-center section--thick-border"
+             style="background-image: url('@backgroundImage')">
+        <div class="section__hero-content">
+            <h1>@Model.HeroHeader</h1>
+            <p class="section__description">@Model.HeroDescription</p>
+            @if (Model.HeroCtalink != null)
+            {
+                <a class="button button--border--solid" href="@Model.HeroCtalink.Url">
+                    @Model.HeroCtacaption
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="section section">
+        @Html.GetGridHtml(Model, "bodyText", "bootstrap3-fluid")
+    </section>
+
+
+    <section class="section section--themed">
+
+        <div class="container">
+            <div class="row">
+
+                <div class="ta-center">
+                    <h2>@Model.FooterHeader</h2>
+                    <p class="section__description mw-640 ma-h-auto">@Model.FooterDescription</p>
+
+                    <a class="button button--border--light_solid" href="@Model.FooterCtalink.Url">
+                        @Model.FooterCtacaption
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>*@

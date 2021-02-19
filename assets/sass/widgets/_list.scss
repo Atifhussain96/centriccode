@@ -1,0 +1,52 @@
+// ol { counter-reset: item }
+// li{ display: block }
+// li:before { content: counters(item, ".") " "; counter-increment: item }
+
+.ordered-list,
+.subordered-list {
+    counter-reset: item;
+    list-style:decimal;
+    @include direction('ar') {
+        list-style:arabic-indic;
+    }
+}
+
+.ordered-list,
+.seprator-list {
+    li {
+        margin-top: 20px;
+
+        // &::before {
+        //     content: counters(item, ".") ".";
+        //     counter-increment: item;
+
+        //     @include direction('en') {
+        //         margin-right: 10px;
+        //     }
+
+        //     @include direction('ar') {
+        //         margin-left: 10px;
+        //     }
+
+        // }
+    }
+}
+
+.seprator-list {
+    list-style: none;
+
+    @include direction('en') {
+        margin-left: 25px;
+    }
+
+    @include direction('ar') {
+        margin-right: 25px;
+    }
+
+    li {
+        &::before {
+            content: "-";
+            margin-right: 10px;
+        }
+    }
+}

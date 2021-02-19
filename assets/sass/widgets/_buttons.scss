@@ -1,0 +1,52 @@
+.btn {
+    font-size: 0.875rem;
+    border-radius: 0;
+    border: 0;
+    position: relative;
+    overflow: hidden;
+
+    @media screen and (max-width: 1300px) {
+        font-size: 0.75rem;
+    }
+
+    &::before {
+        @include shine-hover();
+    }
+
+    &:hover::before {
+        -webkit-animation: shine .75s;
+        animation: shine .75s;
+    }
+}
+
+.btn-default {
+    background:$primaryGreen;
+    color: $white;
+
+    &:hover {
+        background:$primaryGreenHover;
+        color: $white;
+    }
+}
+
+.btn-primary,.btn.btn-primary,.btn-default,.btn.btn-default {
+    background: $primaryGreen;
+    text-transform: uppercase;
+    font-family: $fontMedium;
+    padding: 10px 15px;
+    min-width: 165px;
+    line-height: unset;
+    
+    &:not(:disabled):not(.disabled).active,
+    &:not(:disabled):not(.disabled):active,
+    &:hover,
+    &:active,
+    &:focus {
+        background: $primaryGreenHover;
+        color: $white;
+    }
+    @media screen and (max-width: 992px) {
+        padding: 8px 15px;
+        min-width: 135px;
+    }
+}
